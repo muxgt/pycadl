@@ -23,8 +23,8 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import tensorflow.contrib.layers as tfl
 from cadl.utils import imcrop_tosquare
-from scipy.misc import imresize
-
+#from scipy.misc import imresize
+from PIL import Image
 
 def l1loss(x, y):
     """Summary
@@ -547,7 +547,8 @@ def get_images(path1, path2, img_size=256):
     imgs1 = []
     for f in files1:
         try:
-            img = imresize(imcrop_tosquare(plt.imread(f)), (img_size, img_size))
+            #img = imresize(imcrop_tosquare(plt.imread(f)), (img_size, img_size))
+            img = np.array(Image.fromarray(imcrop_tosquare(plt.imread(f))).resize(img_size, img_size)))
         except:
             continue
         if img.ndim == 3:
@@ -559,7 +560,8 @@ def get_images(path1, path2, img_size=256):
     imgs2 = []
     for f in files2:
         try:
-            img = imresize(imcrop_tosquare(plt.imread(f)), (img_size, img_size))
+            #img = imresize(imcrop_tosquare(plt.imread(f)), (img_size, img_size))
+            img = np.array(Image.fromarray(imcrop_tosquare(plt.imread(f))).resize(img_size, img_size)))
         except:
             continue
         if img.ndim == 3:
@@ -623,11 +625,13 @@ def batch_generator_random_crop(X, Y, min_size=256, max_size=512, n_images=100):
         max_c = c - size
         this_r = np.random.randint(0, max_r)
         this_c = np.random.randint(0, max_c)
-        img = imresize(X[this_r:this_r + size, this_c:this_c + size, :],
-                       (min_size, min_size))
+        #img = imresize(X[this_r:this_r + size, this_c:this_c + size, :],
+        #              (min_size, min_size))
+        img = np.array(Image.fromarray(X[this_r:this_r + size, this_c:this_c + size, :]).resize((min_size, min_size)))
         Xs.append(img)
-        img = imresize(Y[this_r:this_r + size, this_c:this_c + size, :],
-                       (min_size, min_size))
+        #img = imresize(Y[this_r:this_r + size, this_c:this_c + size, :],
+        #               (min_size, min_size))
+        im = np.array(Image.fromarray(Y[this_r:this_r + size, this_c:this_c + size, :]).resize((min_size, min_size)))
         Ys.append(img)
     imgs1, imgs2 = np.array(Xs) / 127.5 - 1.0, np.array(Ys) / 127.5 - 1.0
     n_imgs = min(len(imgs1), len(imgs2))
